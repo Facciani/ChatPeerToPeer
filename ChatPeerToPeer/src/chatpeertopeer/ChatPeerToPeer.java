@@ -8,7 +8,10 @@ package chatpeertopeer;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,18 +24,45 @@ public class ChatPeerToPeer {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws SocketException, IOException {
+    public static void main(String[] args) throws UnknownHostException{
         
-        DatagramSocket server = new DatagramSocket(12345);
-        GestioneConnessione g = new GestioneConnessione(server);
+        int[] porte = {12345,12346,12347,12348,12349,12350};
         
-        g.run();
-        try {
-            g.join();
-            
-        } catch (InterruptedException ex) {
-            Logger.getLogger(ChatPeerToPeer.class.getName()).log(Level.SEVERE, null, ex);
+        int portUtilizzata = 0;
+        DatagramSocket server=null;
+        for(int i = 0; i<porte.length;i++)
+        {
+            try {
+                 server = new DatagramSocket(porte[i]);
+                portUtilizzata = porte[i];
+                break;
+            } catch (SocketException ex) {
+                
+            }
         }
+        
+        if(portUtilizzata == 0)
+        {
+            System.out.println("Nessuna porta utilizzabile");
+        }else
+        {
+            InetAddress indirizzo = InetAddress.getByName("localhost");
+            GestioneConnessione g = new GestioneConnessione(server,indirizzo);
+    
+            g.start();
+            
+            
+            try {
+                g.join();
+
+            } catch (InterruptedException ex) {
+                Logger.getLogger(ChatPeerToPeer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        }
+        
+        
+        
         
         /*DatagramSocket server = new DatagramSocket(12345);
             byte[] buffer = new byte[1500];
