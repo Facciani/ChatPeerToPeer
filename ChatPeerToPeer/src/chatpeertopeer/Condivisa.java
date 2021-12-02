@@ -28,7 +28,7 @@ public class Condivisa {
     String messaggio = "";
     boolean connected = false;
 
-    private Condivisa() throws SocketException, UnknownHostException {
+    public Condivisa() throws SocketException, UnknownHostException {
         this.serverRicezione = new DatagramSocket(12345);
         serverInvio = new DatagramSocket();
         mittente = false;
